@@ -1,22 +1,21 @@
 package net.naspryn.shortlivelink.common;
 
+import net.naspryn.shortlivelink.service.ConfigurationService;
 import org.apache.commons.text.CharacterPredicates;
 import org.apache.commons.text.RandomStringGenerator;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import javax.annotation.PostConstruct;
 
 @Component
 public class TokenGenerator {
 
-    @Value("${token.length}")
-    private Integer tokenLenght;
-
     private RandomStringGenerator randomStringGenerator;
+    private ConfigurationService configurationService;
 
-    @PostConstruct
-    private void init() {
+    @Autowired
+    public TokenGenerator(ConfigurationService configurationService) {
+        this.configurationService = configurationService;
+
         randomStringGenerator =
                 new RandomStringGenerator.Builder()
                         .withinRange('0', 'z')
@@ -25,8 +24,7 @@ public class TokenGenerator {
     }
 
     public String generateToken() {
-        System.out.println(tokenLenght);
-        return randomStringGenerator.generate(tokenLenght).toLowerCase();
+        return randomStringGenerator.generate(configurationService.getTokenLenght()).toLowerCase();
     }
 }
 

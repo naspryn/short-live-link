@@ -24,7 +24,8 @@ public class ShortLiveLinkRestController {
     @GetMapping("/generateToken")
     public String generateToken(@RequestParam String url) {
         linkValidator.validate(url);
-        return "Token for " + url + " is " + linkService.generateToken(url) + " with TTL " + linkService.getDefaultTTL();
+        String token = linkService.generateToken(url);
+        return "Token for " + url + " is " + token + "<a href=\"http://localhost:8080/token/" + token + "\"> - Check token</a>";
     }
 
     @GetMapping("/token/{token}")

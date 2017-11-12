@@ -6,7 +6,6 @@ import net.naspryn.shortlivelink.domain.TokenLinkPair;
 import net.naspryn.shortlivelink.exceptions.LinkNotFoundException;
 import net.naspryn.shortlivelink.repositories.TokenLinkPairRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -14,19 +13,23 @@ public class ShortLiveLinkService implements ShortLiveLink {
 
     private TokenGenerator tokenGenerator;
     private TokenLinkPairRepository repository;
-
-    @Value("${default.ttl}")
-    private Long defaultTTL;
+    private ConfigurationService configurationService;
 
     @Autowired
-    public ShortLiveLinkService(TokenGenerator tokenGenerator, TokenLinkPairRepository repository) {
+    public ShortLiveLinkService(
+            TokenGenerator tokenGenerator,
+            TokenLinkPairRepository repository,
+            ConfigurationService configurationService
+    ) {
         this.tokenGenerator = tokenGenerator;
         this.repository = repository;
+        this.configurationService = configurationService;
     }
 
+    @Override
     public String generateToken(String url) {
         String token = tokenGenerator.generateToken();
-        repository.saveWithTTL(token, url, defaultTTL);
+        repository.saveWithTTL(token, url, configurationService.getDefaultTTL());
         return token;
     }
 
@@ -37,9 +40,5 @@ public class ShortLiveLinkService implements ShortLiveLink {
             throw new LinkNotFoundException();
         }
         return tokenLinkPair.getLink();
-    }
-
-    public Long getDefaultTTL() {
-        return defaultTTL;
     }
 }
