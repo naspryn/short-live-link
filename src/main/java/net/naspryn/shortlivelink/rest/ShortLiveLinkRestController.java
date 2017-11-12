@@ -12,9 +12,7 @@ import org.springframework.web.servlet.ModelAndView;
 @RestController
 public class ShortLiveLinkRestController {
 
-
     private ShortLiveLinkService linkService;
-
     private LinkValidator linkValidator;
 
     @Autowired

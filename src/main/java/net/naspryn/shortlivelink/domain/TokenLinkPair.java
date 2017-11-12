@@ -4,21 +4,20 @@ import org.springframework.data.cassandra.mapping.Column;
 import org.springframework.data.cassandra.mapping.PrimaryKey;
 import org.springframework.data.cassandra.mapping.Table;
 
-@Table("token_url")
-public class TokenUrlPair {
+@Table("token_link")
+public class TokenLinkPair {
 
     @PrimaryKey("token")
     private String token;
 
-    @Column("url")
-    private String url;
+    @Column("link")
+    private String link;
 
-    public TokenUrlPair() {
-    }
 
-    public TokenUrlPair(String token, String url) {
+
+    public TokenLinkPair(String token, String link) {
         this.token = token;
-        this.url = url;
+        this.link = link;
     }
 
     public String getToken() {
@@ -29,12 +28,12 @@ public class TokenUrlPair {
         this.token = token;
     }
 
-    public String getUrl() {
-        return url;
+    public String getLink() {
+        return link;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    public void setLink(String link) {
+        this.link = link;
     }
 
     @Override
@@ -42,7 +41,7 @@ public class TokenUrlPair {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        TokenUrlPair that = (TokenUrlPair) o;
+        TokenLinkPair that = (TokenLinkPair) o;
 
         return token != null ? token.equals(that.token) : that.token == null;
     }
@@ -54,9 +53,9 @@ public class TokenUrlPair {
 
     @Override
     public String toString() {
-        return "TokenUrlPair{" +
+        return "TokenLinkPair{" +
                 "token='" + token + '\'' +
-                ", url='" + url + '\'' +
+                ", link='" + link + '\'' +
                 '}';
     }
 }

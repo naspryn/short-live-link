@@ -2,8 +2,9 @@ package net.naspryn.shortlivelink.service;
 
 import net.naspryn.shortlivelink.api.ShortLiveLink;
 import net.naspryn.shortlivelink.common.TokenGenerator;
-import net.naspryn.shortlivelink.domain.TokenUrlPair;
-import net.naspryn.shortlivelink.repositories.TokenUrlPairRepository;
+import net.naspryn.shortlivelink.domain.TokenLinkPair;
+import net.naspryn.shortlivelink.exceptions.LinkNotFoundException;
+import net.naspryn.shortlivelink.repositories.TokenLinkPairRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -12,30 +13,33 @@ import org.springframework.stereotype.Service;
 public class ShortLiveLinkService implements ShortLiveLink {
 
     private TokenGenerator tokenGenerator;
+    private TokenLinkPairRepository repository;
 
-    private TokenUrlPairRepository repository;
+    @Value("${default.ttl}")
+    private Long defaultTTL;
 
     @Autowired
-    public ShortLiveLinkService(TokenGenerator tokenGenerator, TokenUrlPairRepository repository) {
+    public ShortLiveLinkService(TokenGenerator tokenGenerator, TokenLinkPairRepository repository) {
         this.tokenGenerator = tokenGenerator;
         this.repository = repository;
     }
 
     public String generateToken(String url) {
         String token = tokenGenerator.generateToken();
-        repository.save(new TokenUrlPair(token, url));
+        repository.saveWithTTL(token, url, defaultTTL);
         return token;
     }
 
     @Override
     public String getUrlFromToken(String token) {
-        return "http://google.pl?q=" + token;
+        TokenLinkPair tokenLinkPair = repository.getByToken(token);
+        if (tokenLinkPair == null || tokenLinkPair.getLink() == null) {
+            throw new LinkNotFoundException();
+        }
+        return tokenLinkPair.getLink();
     }
 
-    @Value("${default.ttl}")
-    private Integer defaultTTL;
-
-    public Integer getDefaultTTL() {
+    public Long getDefaultTTL() {
         return defaultTTL;
     }
 }
