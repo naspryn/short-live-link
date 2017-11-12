@@ -8,11 +8,10 @@ import org.springframework.data.cassandra.mapping.Table;
 public class TokenLinkPair {
 
     @PrimaryKey("token")
-    private String token;
+    private final String token;
 
     @Column("link")
-    private String link;
-
+    private final String link;
 
 
     public TokenLinkPair(String token, String link) {
@@ -24,16 +23,8 @@ public class TokenLinkPair {
         return token;
     }
 
-    public void setToken(String token) {
-        this.token = token;
-    }
-
     public String getLink() {
         return link;
-    }
-
-    public void setLink(String link) {
-        this.link = link;
     }
 
     @Override
