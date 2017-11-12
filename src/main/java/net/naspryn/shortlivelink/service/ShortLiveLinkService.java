@@ -1,12 +1,13 @@
 package net.naspryn.shortlivelink.service;
 
+import net.naspryn.shortlivelink.api.ShortLiveLink;
 import net.naspryn.shortlivelink.common.TokenGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ShortLiveLinkService {
+public class ShortLiveLinkService implements ShortLiveLink {
 
     private TokenGenerator tokenGenerator;
 
@@ -17,6 +18,11 @@ public class ShortLiveLinkService {
 
     public String generateToken(String url) {
         return tokenGenerator.generateToken();
+    }
+
+    @Override
+    public String getUrlFromToken(String token) {
+        return "http://google.pl?q=" + token;
     }
 
     @Value("${default.ttl}")
