@@ -24,7 +24,7 @@ public class TokenGenerator {
     }
 
     public String generateToken() {
-        return randomStringGenerator.generate(configurationService.getTokenLenght()).toLowerCase();
+        return randomStringGenerator.generate(configurationService.getTokenLength()).toLowerCase();
     }
 }
 

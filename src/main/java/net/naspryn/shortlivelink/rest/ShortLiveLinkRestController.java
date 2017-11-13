@@ -1,18 +1,20 @@
 package net.naspryn.shortlivelink.rest;
 
+import net.naspryn.shortlivelink.api.ShortLiveLink;
 import net.naspryn.shortlivelink.common.LinkValidator;
 import net.naspryn.shortlivelink.service.ShortLiveLinkService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.HttpServletRequest;
 
 @RestController
 public class ShortLiveLinkRestController {
 
-    private ShortLiveLinkService linkService;
+    private ShortLiveLink linkService;
     private LinkValidator linkValidator;
 
     @Autowired
@@ -22,10 +24,11 @@ public class ShortLiveLinkRestController {
     }
 
     @GetMapping("/generateToken")
-    public String generateToken(@RequestParam String url) {
-        linkValidator.validate(url);
-        String token = linkService.generateToken(url);
-        return "Token for " + url + " is <a href=\"http://localhost:8080/token/" + token + "\">" + token + "</a>";
+    public String generateToken(HttpServletRequest request) {
+        String link = request.getQueryString().replaceFirst("url=", "");
+        linkValidator.validate(link);
+        String token = linkService.generateToken(link);
+        return "Token is <a href=\"http://localhost:8080/token/" + token + "\">" + token + "</a>";
     }
 
     @GetMapping("/token/{token}")

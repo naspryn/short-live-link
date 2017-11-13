@@ -8,6 +8,8 @@ import net.naspryn.shortlivelink.repositories.TokenLinkPairRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class ShortLiveLinkService implements ShortLiveLink {
 
@@ -27,18 +29,15 @@ public class ShortLiveLinkService implements ShortLiveLink {
     }
 
     @Override
-    public String generateToken(String url) {
+    public String generateToken(String link) {
         String token = tokenGenerator.generateToken();
-        repository.saveWithTTL(token, url, configurationService.getDefaultTTL());
+        repository.saveWithTTL(token, link, configurationService.getDefaultTTL());
         return token;
     }
 
     @Override
     public String getUrlFromToken(String token) {
-        TokenLinkPair tokenLinkPair = repository.getByToken(token);
-        if (tokenLinkPair == null || tokenLinkPair.getLink() == null) {
-            throw new LinkNotFoundException();
-        }
-        return tokenLinkPair.getLink();
+        Optional<TokenLinkPair> tokenLinkPair = repository.getByToken(token);
+        return tokenLinkPair.orElseThrow(LinkNotFoundException::new).getLink();
     }
 }

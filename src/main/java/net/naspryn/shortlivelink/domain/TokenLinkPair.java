@@ -1,12 +1,14 @@
 package net.naspryn.shortlivelink.domain;
 
 import org.springframework.data.cassandra.mapping.Column;
+import org.springframework.data.cassandra.mapping.Indexed;
 import org.springframework.data.cassandra.mapping.PrimaryKey;
 import org.springframework.data.cassandra.mapping.Table;
 
 @Table("token_link")
 public class TokenLinkPair {
 
+    @Indexed
     @PrimaryKey("token")
     private final String token;
 
