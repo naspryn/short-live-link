@@ -13,6 +13,6 @@ public interface TokenLinkPairRepository extends CassandraRepository<TokenLinkPa
 
     Optional<TokenLinkPair> getByToken(String token);
 
-    @Query("insert into token_link (\"token\", \"link\") values (:token, :link) using ttl :ttl")
-    TokenLinkPair saveWithTTL(@Param("token") String token, @Param("link") String link, @Param("ttl") long ttl);
+    @Query("insert into token_link (\"token\", \"link\") values (:#{#tokenLink.token}, :#{#tokenLink.link}) using ttl :ttl")
+    TokenLinkPair saveWithTTL(@Param("tokenLink") TokenLinkPair tokenLink, @Param("ttl") long ttl);
 }
