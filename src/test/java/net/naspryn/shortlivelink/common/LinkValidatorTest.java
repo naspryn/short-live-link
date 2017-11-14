@@ -4,6 +4,7 @@ import net.naspryn.shortlivelink.exceptions.InvalidUrlException;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class LinkValidatorTest {
 
@@ -32,8 +33,7 @@ public class LinkValidatorTest {
 
     @Test
     public void validateShouldThrowInvalidUrlException() {
-        assertThatCode(() -> new LinkValidator().validate(INVALID_URL))
+        assertThatThrownBy(() -> new LinkValidator().validate(INVALID_URL))
                 .isInstanceOf(InvalidUrlException.class);
     }
-
 }

@@ -12,5 +12,4 @@ public class ShortLiveLinkApplicationTests {
 	@Test
 	public void contextLoads() {
 	}
-
 }

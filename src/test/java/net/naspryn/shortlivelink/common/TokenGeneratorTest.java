@@ -1,7 +1,8 @@
 package net.naspryn.shortlivelink.common;
 
-import net.naspryn.shortlivelink.service.ConfigurationService;
+import net.naspryn.shortlivelink.util.ConfigurationServiceStub;
 import org.junit.Test;
+
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -45,9 +46,6 @@ public class TokenGeneratorTest {
     }
 
     private static TokenGenerator getTokenGenerator() {
-        ConfigurationService configurationService = new ConfigurationService();
-        configurationService.setTokenLength(12);
-        return new TokenGenerator(configurationService);
+        return new TokenGenerator(ConfigurationServiceStub.getInstance());
     }
-
 }
