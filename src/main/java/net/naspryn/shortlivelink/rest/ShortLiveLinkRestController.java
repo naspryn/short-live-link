@@ -28,11 +28,12 @@ public class ShortLiveLinkRestController {
         String link = request.getQueryString().replaceFirst("url=", "");
         linkValidator.validate(link);
         String token = linkService.generateToken(link);
+        //TODO: change response to return only token
         return "Token is <a href=\"http://localhost:8080/token/" + token + "\">" + token + "</a>";
     }
 
     @GetMapping("/token/{token}")
-    public ModelAndView redirectToLink(@PathVariable String token) {
+    public ModelAndView redirectToLinkByToken(@PathVariable String token) {
         return new ModelAndView("redirect:" + linkService.getUrlFromToken(token));
     }
 }

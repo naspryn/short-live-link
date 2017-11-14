@@ -30,9 +30,10 @@ public class ShortLiveLinkService implements ShortLiveLink {
 
     @Override
     public String generateToken(String link) {
-        String token = tokenGenerator.generateToken();
-        repository.saveWithTTL(new TokenLinkPair(token, link), configurationService.getDefaultTTL());
-        return token;
+        TokenLinkPair tokenLinkPair = repository.saveWithTTL(
+                new TokenLinkPair(tokenGenerator.generateToken(), link),
+                configurationService.getDefaultTTL());
+        return tokenLinkPair.getToken();
     }
 
     @Override

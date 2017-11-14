@@ -9,7 +9,7 @@
 	<packaging>jar</packaging>
 
 	<name>short-live-link</name>
-	<description>Demo project for Spring Boot</description>
+	<description>Short Live Link</description>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -53,6 +53,12 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.cassandraunit</groupId>
+			<artifactId>cassandra-unit-spring</artifactId>
+			<version>3.3.0.2</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
