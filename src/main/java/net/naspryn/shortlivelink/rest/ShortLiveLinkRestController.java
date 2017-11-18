@@ -27,9 +27,7 @@ public class ShortLiveLinkRestController {
     public String generateToken(HttpServletRequest request) {
         String link = request.getQueryString().replaceFirst("url=", "");
         linkValidator.validate(link);
-        String token = linkService.generateToken(link);
-        //TODO: change response to return only token
-        return "Token is <a href=\"http://localhost:8080/token/" + token + "\">" + token + "</a>";
+        return linkService.generateToken(link);
     }
 
     @GetMapping("/token/{token}")

@@ -6,6 +6,7 @@ import net.naspryn.shortlivelink.domain.TokenLinkPair;
 import net.naspryn.shortlivelink.repositories.TokenLinkPairRepository;
 import net.naspryn.shortlivelink.service.ConfigurationService;
 import net.naspryn.shortlivelink.service.ShortLiveLinkService;
+import net.naspryn.shortlivelink.util.TestUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,10 +23,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.io.UnsupportedEncodingException;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyLong;
-import static org.mockito.Matchers.anyString;
+import static net.naspryn.shortlivelink.util.TestUtil.*;
 import static org.mockito.Mockito.when;
 
 /**
@@ -54,48 +52,41 @@ public class ShortLiveLinkRestControllerIntegrationTest {
     private TokenLinkPairRepository repository;
 
     @Test
-    public void generateToken() throws Exception {
-        when(repository.saveWithTTL(any(TokenLinkPair.class), anyLong()))
-                .thenReturn(new TokenLinkPair(TOKEN, GOOGLE_COM));
-
+    public void generateTokenShouldReturnValidToken() throws Exception {
         mockMvc.perform(get(GENERATE_TOKEN_URL + GOOGLE_COM))
-                .andExpect(this::statusOk)
-                .andExpect(r -> receivedTokenEqualTo(r, TOKEN));
+                .andExpect(TestUtil::statusOk)
+                .andExpect(TestUtil::tokenValid);
     }
 
     @Test
-    public void redirectToLinkByToken() throws Exception {
-        when(repository.getByToken(anyString()))
-                .thenReturn(Optional.ofNullable(new TokenLinkPair(TOKEN, GOOGLE_COM)));
+    public void redirectToLinkByTokenShouldHave302Response() throws Exception {
+        when(repository.getByToken(VALID_TOKEN))
+                .thenReturn(Optional.ofNullable(new TokenLinkPair(INVALID_TOKEN, GOOGLE_COM)));
 
-        RequestBuilder requestBuilder = get(GET_LINK_BY_TOKEN_URL + TOKEN);
-        mockMvc.perform(requestBuilder)
-                .andExpect(this::status302)
+        mockMvc.perform(get(GET_LINK_BY_TOKEN_URL + VALID_TOKEN))
+                .andExpect(TestUtil::status302)
                 .andExpect(r -> redirectedUrlEqualTo(r, GOOGLE_COM));
+    }
+
+    @Test
+    public void generateTokenForInvalidUrlShouldHaveError400Response() throws Exception {
+        mockMvc.perform(get(GENERATE_TOKEN_URL + INVALID_URL))
+                .andExpect(TestUtil::status400)
+                .andExpect(TestUtil::invalidUrlErrorMessage);
+    }
+
+    @Test
+    public void getLinkForInvalidTokenShouldHaveError404Response() throws Exception {
+        when(repository.getByToken(INVALID_TOKEN))
+                .thenReturn(Optional.empty());
+
+        mockMvc.perform(get(GET_LINK_BY_TOKEN_URL + INVALID_TOKEN))
+                .andExpect(TestUtil::status404)
+                .andExpect(TestUtil::invalidTokenErrorMessage);
     }
 
     private static MockHttpServletRequestBuilder get(String urlTemplate) {
         return MockMvcRequestBuilders.get(
                 urlTemplate);
-    }
-
-    private void statusOk(MvcResult result) {
-        assertThat(result.getResponse().getStatus()).as("Status should be 200 OK").isEqualTo(200);
-    }
-
-    private void status302(MvcResult result) {
-        assertThat(result.getResponse().getStatus()).as("Status should be 302").isEqualTo(302);
-    }
-
-    private void redirectedUrlEqualTo(MvcResult result, String expectedUrl) {
-        assertThat(result.getResponse().getRedirectedUrl())
-                .as("Redirected URL should be same as expected URL")
-                .isEqualTo(expectedUrl);
-    }
-
-    private void receivedTokenEqualTo(MvcResult result, String expectedToken) throws UnsupportedEncodingException {
-        assertThat(result.getResponse().getContentAsString())
-                .as("Received token should be same as expected token")
-                .isEqualTo(expectedToken);
     }
 }
