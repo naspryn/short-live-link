@@ -13,14 +13,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Optional;
 
 import static net.naspryn.shortlivelink.util.TestUtil.*;
@@ -30,15 +28,9 @@ import static org.mockito.Mockito.when;
  * This class tests integration of services with mocked repository
  */
 @RunWith(SpringRunner.class)
+@TestPropertySource("classpath:application-test.properties")
 @WebMvcTest(ShortLiveLinkRestController.class)
 public class ShortLiveLinkRestControllerIntegrationTest {
-
-    //TODO: write more tests
-
-    private static final String TOKEN = "asdf78dfs62s";
-    private static final String GOOGLE_COM = "https://google.com";
-    private static final String GENERATE_TOKEN_URL = "/generateToken?url=";
-    private static final String GET_LINK_BY_TOKEN_URL = "/token/";
 
     @Autowired
     private MockMvc mockMvc;
@@ -61,7 +53,7 @@ public class ShortLiveLinkRestControllerIntegrationTest {
     @Test
     public void redirectToLinkByTokenShouldHave302Response() throws Exception {
         when(repository.getByToken(VALID_TOKEN))
-                .thenReturn(Optional.ofNullable(new TokenLinkPair(INVALID_TOKEN, GOOGLE_COM)));
+                .thenReturn(Optional.ofNullable(new TokenLinkPair(VALID_TOKEN, GOOGLE_COM)));
 
         mockMvc.perform(get(GET_LINK_BY_TOKEN_URL + VALID_TOKEN))
                 .andExpect(TestUtil::status302)
