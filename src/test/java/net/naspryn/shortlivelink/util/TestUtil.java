@@ -37,7 +37,7 @@ public class TestUtil {
     public static void tokenValid(MvcResult result) throws UnsupportedEncodingException {
         assertThat(result.getResponse().getContentAsString())
                 .as("Token should be valid")
-                .matches("[a-z0-9]{12}");
+                .matches("[a-z0-9]{20}");
     }
 
     public static void invalidUrlErrorMessage(MvcResult result) {

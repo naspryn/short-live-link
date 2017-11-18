@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class ConfigurationService {
 
-    @Value("${service.token.length:12}")
+    @Value("${service.token.length:2}")
     private Integer tokenLength;
 
     @Value("${service.default.ttl:60}")
